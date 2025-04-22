@@ -2,7 +2,7 @@ pipeline {
 	agent any
 
 	tools {
-		maven 'mvn'
+		maven 'maven'
 	}
 
 	environment {
@@ -60,7 +60,6 @@ pipeline {
                         sh "aws ecr get-login-password --region ${AWS_REGION} | docker login --username AWS --password-stdin ${ECR_REPO_URI}"
                         sh "docker push ${ECR_REPO_URI}:${BUILD_NUMBER}"
                     }
-                    // sh "docker tag ${ECR_REPO_NAME}:${IMAGE_TAG} ${ECR_URI}:${IMAGE_TAG}"
                 }
             }
         }
