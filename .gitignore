@@ -1,0 +1,40 @@
+# Java specific
+*.class            # Ignore compiled class files
+*.log              # Ignore log files
+*.out              # Ignore output files
+*.jar              # Ignore JAR files (unless you want to commit them)
+*.war              # Ignore WAR files (unless you want to commit them)
+*.ear              # Ignore EAR files (unless you want to commit them)
+*.javadoc          # Ignore Javadoc files
+*.swp              # Ignore vim swap files
+*.swo              # Ignore vim swap files
+*.bak              # Ignore backup files
+*.tmp              # Ignore temporary files
+
+# Maven specific
+target/            # Maven build directory
+!.mvn/wrapper/     # Don't ignore Maven wrapper
+*.log              # Ignore Maven log files
+
+# Gradle specific
+.gradle/           # Gradle build directory
+build/             # Gradle build directory
+
+# IDE specific (IntelliJ IDEA, Eclipse, NetBeans, etc.)
+.idea/             # IntelliJ IDEA project files
+*.iml              # IntelliJ project files
+*.ipr              # IntelliJ project files
+*.iws              # IntelliJ workspace files
+.vscode/           # Visual Studio Code project files
+*.classpath        # Eclipse classpath configuration
+*.project          # Eclipse project configuration
+.settings/         # Eclipse settings
+*.buildpath        # Eclipse build path file
+
+# Operating System specific
+.DS_Store          # macOS Finder metadata
+Thumbs.db          # Windows thumbnail cache
+
+# Other common files
+*.jar.original     # Original JAR file (if using tools that rename)
+*.war.original     # Original WAR file
