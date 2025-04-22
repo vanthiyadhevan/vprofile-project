@@ -1,0 +1,36 @@
+# Ignore target directory (where compiled bytecode and JAR files are stored)
+target/
+
+# Ignore Maven wrapper files (if you're using Maven)
+.mvn/
+*.mvn/
+
+# Ignore IDE-specific files (for IntelliJ IDEA, Eclipse, etc.)
+.idea/
+*.iml
+*.ipr
+*.iws
+
+# Ignore build-related files (for Maven, Gradle, etc.)
+*.log
+*.class
+*.jar
+*.war
+*.ear
+
+# Ignore dependency directories (for Maven, Gradle, etc.)
+node_modules/
+
+# Ignore the .git directory (version control metadata)
+.git/
+.gitignore
+
+# Ignore environment variable files (like .env)
+.env
+
+# Ignore temporary system files
+.DS_Store
+Thumbs.db
+
+# Ignore Java temporary files
+*.swp
