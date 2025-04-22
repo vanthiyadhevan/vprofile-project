@@ -48,7 +48,7 @@ pipeline {
         stage('Docker Build') {
             steps {
                 script {
-                    sh "docker build -t ${ECR_REPO_URI}:${BUILD_NUMBER} -f Dockerfile ."
+                    sh "docker build -t ${ECR_REPO_URI_VPROFILE}:${BUILD_NUMBER} -f Dockerfile ."
                 }
             }
         }
@@ -57,8 +57,8 @@ pipeline {
             steps {
                 script {
                     withCredentials([aws(accessKeyVariable: 'AWS_ACCESS_KEY_ID', credentialsId: 'aws_creds', secretKeyVariable: 'AWS_SECRET_ACCESS_KEY')]) {
-                        sh "aws ecr get-login-password --region ${AWS_REGION} | docker login --username AWS --password-stdin ${ECR_REPO_URI}"
-                        sh "docker push ${ECR_REPO_URI}:${BUILD_NUMBER}"
+                        sh "aws ecr get-login-password --region ${AWS_REGION} | docker login --username AWS --password-stdin ${ECR_REPO_URI_VPROFILE}"
+                        sh "docker push ${ECR_REPO_URI_VPROFILE}:${BUILD_NUMBER}"
                     }
                 }
             }
