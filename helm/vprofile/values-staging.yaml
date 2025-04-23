@@ -4,3 +4,4 @@ appimage: myregistry/vproapp
 
 # Tag for the Docker image
 apptag: latest
+pullPolicy: Always
