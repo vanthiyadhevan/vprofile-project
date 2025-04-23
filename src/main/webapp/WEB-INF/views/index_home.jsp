@@ -120,7 +120,7 @@
 	    </p>
 	    <p><strong>Address:</strong>  Flat no: 205, 2nd Floor,NILGIRI Block,Aditya Encalve,Ameerpet, Hyderabad-16</p> 
 	    <p><strong>Ph No: </strong>  +91-9704455959,9618245689</p>
-		<p><strong>E-Mail ID :</strong>  visualpath999@gmail.com</p>
+		<p><strong>E-Mail ID :</strong>  vncdigitalservies@gmail.com</p>
   	</div>
    </div>
   
