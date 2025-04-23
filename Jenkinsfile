@@ -79,7 +79,7 @@ pipeline {
             steps {
                 sh 'pwd'
                 sh '''
-                    helm upgrade --install vprofile ${CHART_PATH} \
+                    helm upgrade --install vprofile1 ${CHART_PATH} \
                     --namespace staging \
                     --create-namespace \
                     -f ${CHART_PATH}/values-staging.yaml \
