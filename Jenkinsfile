@@ -82,7 +82,10 @@ pipeline {
                     helm upgrade --install vprofile ${CHART_PATH} \
                     --namespace staging \
                     --create-namespace \
-                    -f ${CHART_PATH}/values-staging.yaml 
+                    -f ${CHART_PATH}/values-staging.yaml \
+                    --set appimage=${ECR_REPO_URI_VPROFILE}/${ECR_REPO_NAME_VPROFILE} \
+                    --set apptag=${BUILD_NUMBER} \
+                    --kubeconfig ${KUBECONFIG} --debug
                    '''
             }
         }
