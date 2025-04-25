@@ -136,9 +136,6 @@ pipeline {
         // }
 
         stage('Upload - AWS S3') {
-            when {
-                branch 'staging'
-            }
             steps {
                 withCredentials([aws(accessKeyVariable: 'AWS_ACCESS_KEY_ID', credentialsId: 'aws_creds', secretKeyVariable: 'AWS_SECRET_ACCESS_KEY')]) {
                         sh  '''
@@ -152,7 +149,7 @@ pipeline {
                         '''
                         s3Upload(
                             file:"reports-$BUILD_ID", 
-                            bucket:'staging-test-reports', 
+                            bucket:'staging-test-reports-chatapp', 
                             path:"jenkins-$BUILD_ID/"
                         )
                 }
