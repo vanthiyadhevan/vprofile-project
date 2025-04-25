@@ -47,12 +47,7 @@ pipeline {
         stage('Checkstyle Analysis') {
             steps {
                 sh 'mvn checkstyle:checkstyle'
-            }
-            post {
-                always {
-                    checkstyle canComputeNew: false, defaultEncoding: '', healthy: '', pattern: '**/target/checkstyle-result.xml', unHealthy: ''
-                }
-            }
+            } 
         }
 
         stage('Docker Build') {
