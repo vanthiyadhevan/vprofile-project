@@ -30,7 +30,7 @@ pipeline {
             }
         }
 
-        stage('Test') {
+        stage('Unit Test') {
             steps {
                 script {
                     // Run Maven unit tests and generate reports
@@ -109,16 +109,16 @@ pipeline {
             }
         }
 
-        stage('kube config creation') {
-            steps{
-                script {
-                    withCredentials([aws(accessKeyVariable: 'AWS_ACCESS_KEY_ID', credentialsId: 'aws_creds', secretKeyVariable: 'AWS_SECRET_ACCESS_KEY')]){
-                        sh 'aws eks update-kubeconfig --region ${AWS_REGION} --name ${CLUSTER_NAME}'
-                        sh 'cat ~/.kube/config'
-                    }
-                }
-            }
-        }
+        // stage('kube config creation') {
+        //     steps{
+        //         script {
+        //             withCredentials([aws(accessKeyVariable: 'AWS_ACCESS_KEY_ID', credentialsId: 'aws_creds', secretKeyVariable: 'AWS_SECRET_ACCESS_KEY')]){
+        //                 sh 'aws eks update-kubeconfig --region ${AWS_REGION} --name ${CLUSTER_NAME}'
+        //                 sh 'cat ~/.kube/config'
+        //             }
+        //         }
+        //     }
+        // }
 
         // stage('Deploy to Staging Helm') {
         //     steps {
@@ -134,5 +134,36 @@ pipeline {
         //            '''
         //     }
         // }
+
+        stage('Upload - AWS S3') {
+            when {
+                branch 'staging'
+            }
+            steps {
+                withCredentials([aws(accessKeyVariable: 'AWS_ACCESS_KEY_ID', credentialsId: 'aws_creds', secretKeyVariable: 'AWS_SECRET_ACCESS_KEY')]) {
+                        sh  '''
+                            ls -ltr
+                            mkdir reports-$BUILD_ID
+                            cp -rf coverage/ reports-$BUILD_ID/
+                            cp -rf target/surefire-reports/ reports-$BUILD_ID/
+                            cp -rf target/checkstyle-result.xml reports-$BUILD_ID/
+                            cp trivy*.* reports-$BUILD_ID/
+                            ls -ltr reports-$BUILD_ID/
+                        '''
+                        s3Upload(
+                            file:"reports-$BUILD_ID", 
+                            bucket:'staging-test-reports', 
+                            path:"jenkins-$BUILD_ID/"
+                        )
+                }
+            }
+        }
+    }
+    post {
+        always {
+            //Add channel name
+            slackSend channel: '#jenkins-cicd', color: '#FF0000', message: "Find Status of Pipeline:- ${currentBuild.currentResult} ${env.JOB_NAME} ${env.BUILD_NUMBER} ${BUILD_URL}"
+            // message: "Find Status of Pipeline:- ${currentBuild.currentResult} ${env.JOB_NAME} ${env.BUILD_NUMBER} ${BUILD_URL}"
+        }
     }
 }
