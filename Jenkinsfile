@@ -37,11 +37,21 @@ pipeline {
                     sh "mvn test"
                 }
             }
+            post {
+                always {
+                    junit '**/target/surefire-reports/*.xml'
+                }
+            }
         }
-
+        
         stage('Checkstyle Analysis') {
             steps {
                 sh 'mvn checkstyle:checkstyle'
+            }
+            post {
+                always {
+                    checkstyle canComputeNew: false, defaultEncoding: '', healthy: '', pattern: '**/target/checkstyle-result.xml', unHealthy: ''
+                }
             }
         }
 
@@ -49,6 +59,46 @@ pipeline {
             steps {
                 script {
                     sh "docker build -t ${ECR_REPO_URI_VPROFILE}:${BUILD_NUMBER} -f Dockerfile ."
+                }
+            }
+        }
+
+        stage('Trivy Vulnerability Scanner') {
+            steps {
+                // sh 'echo $PATH && which trivy && trivy --version'
+                sh  ''' 
+                    trivy image $ECR_REPO_URI:$BUILD_NUMBER \
+                        --severity LOW,MEDIUM,HIGH \
+                        --exit-code 0 \
+                        --quiet \
+                        --format json -o trivy-image-MEDIUM-results.json
+
+                    trivy image $ECR_REPO_URI:$BUILD_NUMBER \
+                        --severity CRITICAL \
+                        --exit-code 0 \
+                        --quiet \
+                        --format json -o trivy-image-CRITICAL-results.json
+                '''
+            }
+            post {
+                always {
+                    sh '''
+                        trivy convert \
+                            --format template --template "@/usr/local/share/trivy/templates/html.tpl" \
+                            --output trivy-image-MEDIUM-results.html trivy-image-MEDIUM-results.json 
+
+                        trivy convert \
+                            --format template --template "@/usr/local/share/trivy/templates/html.tpl" \
+                            --output trivy-image-CRITICAL-results.html trivy-image-CRITICAL-results.json
+
+                        trivy convert \
+                            --format template --template "@/usr/local/share/trivy/templates/junit.tpl" \
+                            --output trivy-image-MEDIUM-results.xml  trivy-image-MEDIUM-results.json 
+
+                        trivy convert \
+                            --format template --template "@/usr/local/share/trivy/templates/junit.tpl" \
+                            --output trivy-image-CRITICAL-results.xml trivy-image-CRITICAL-results.json          
+                    '''
                 }
             }
         }
@@ -75,19 +125,19 @@ pipeline {
             }
         }
 
-        stage('Deploy to Staging Helm') {
-            steps {
-                sh 'pwd'
-                sh '''
-                    helm upgrade --install vprofile ${CHART_PATH} \
-                    --namespace staging \
-                    --create-namespace \
-                    -f ${CHART_PATH}/values-staging.yaml \
-                    --set appimage=${ECR_REPO_URI_VPROFILE}/${ECR_REPO_NAME_VPROFILE} \
-                    --set apptag=${BUILD_NUMBER} \
-                    --kubeconfig ${KUBECONFIG} --debug
-                   '''
-            }
-        }
+        // stage('Deploy to Staging Helm') {
+        //     steps {
+        //         sh 'pwd'
+        //         sh '''
+        //             helm upgrade --install vprofile ${CHART_PATH} \
+        //             --namespace staging \
+        //             --create-namespace \
+        //             -f ${CHART_PATH}/values-staging.yaml \
+        //             --set appimage=${ECR_REPO_URI_VPROFILE}/${ECR_REPO_NAME_VPROFILE} \
+        //             --set apptag=${BUILD_NUMBER} \
+        //             --kubeconfig ${KUBECONFIG} --debug
+        //            '''
+        //     }
+        // }
     }
 }

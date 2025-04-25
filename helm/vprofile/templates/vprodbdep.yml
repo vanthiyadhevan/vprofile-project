@@ -9,6 +9,8 @@ spec:
     matchLabels:
       app: vprodb
   replicas: 1
+  strategy:
+    type: RollingUpdate
   template:
     metadata:
       labels:
