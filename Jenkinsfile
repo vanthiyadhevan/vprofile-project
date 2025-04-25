@@ -62,13 +62,13 @@ pipeline {
             steps {
                 // sh 'echo $PATH && which trivy && trivy --version'
                 sh  ''' 
-                    trivy image $ECR_REPO_URI:$BUILD_NUMBER \
+                    trivy image $ECR_REPO_URI_VPROFILE:$BUILD_NUMBER \
                         --severity LOW,MEDIUM,HIGH \
                         --exit-code 0 \
                         --quiet \
                         --format json -o trivy-image-MEDIUM-results.json
 
-                    trivy image $ECR_REPO_URI:$BUILD_NUMBER \
+                    trivy image $ECR_REPO_URI_VPROFILE:$BUILD_NUMBER \
                         --severity CRITICAL \
                         --exit-code 0 \
                         --quiet \
