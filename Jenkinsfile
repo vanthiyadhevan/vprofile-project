@@ -1,3 +1,9 @@
+def COLOR_MAP = [
+    'SUCCESS': '#00FF00',
+    'FAILURE': '#FF0000',
+    'UNSTABLE': '#FFFF00',
+    'ABORTED': '#FFA500'
+] 
 pipeline {
 	agent any
 
@@ -157,8 +163,13 @@ pipeline {
     }
     post {
         always {
+            script {
+                def color = COLOR_MAP[currentBuild.currentResult] ?: '#FFFFFF'
+                def message = "Pipeline ${currentBuild.currentResult}: ${env.JOB_NAME} #${env.BUILD_NUMBER} - ${env.BUILD_URL}"
+                slackSend channel: '#jenkins-cicd', color: color, message: message
+            }
             //Add channel name
-            slackSend channel: '#jenkins-cicd', color: '#FF0000', message: "Find Status of Pipeline:- ${currentBuild.currentResult} ${env.JOB_NAME} ${env.BUILD_NUMBER} ${BUILD_URL}"
+            // slackSend channel: '#jenkins-cicd', color: '#FF0000', message: "Find Status of Pipeline:- ${currentBuild.currentResult} ${env.JOB_NAME} ${env.BUILD_NUMBER} ${BUILD_URL}"
             // message: "Find Status of Pipeline:- ${currentBuild.currentResult} ${env.JOB_NAME} ${env.BUILD_NUMBER} ${BUILD_URL}"
         }
     }
