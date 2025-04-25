@@ -141,7 +141,6 @@ pipeline {
                         sh  '''
                             ls -ltr
                             mkdir reports-$BUILD_ID
-                            // cp -rf coverage/ reports-$BUILD_ID/
                             cp -rf target/surefire-reports/ reports-$BUILD_ID/
                             cp -rf target/checkstyle-result.xml reports-$BUILD_ID/
                             cp trivy*.* reports-$BUILD_ID/
