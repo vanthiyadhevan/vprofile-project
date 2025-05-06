@@ -115,31 +115,31 @@ pipeline {
             }
         }
 
-        // stage('kube config creation') {
-        //     steps{
-        //         script {
-        //             withCredentials([aws(accessKeyVariable: 'AWS_ACCESS_KEY_ID', credentialsId: 'aws_creds', secretKeyVariable: 'AWS_SECRET_ACCESS_KEY')]){
-        //                 sh 'aws eks update-kubeconfig --region ${AWS_REGION} --name ${CLUSTER_NAME}'
-        //                 sh 'cat ~/.kube/config'
-        //             }
-        //         }
-        //     }
-        // }
+        stage('kube config creation') {
+            steps{
+                script {
+                    withCredentials([aws(accessKeyVariable: 'AWS_ACCESS_KEY_ID', credentialsId: 'aws_creds', secretKeyVariable: 'AWS_SECRET_ACCESS_KEY')]){
+                        sh 'aws eks update-kubeconfig --region ${AWS_REGION} --name ${CLUSTER_NAME}'
+                        sh 'cat ~/.kube/config'
+                    }
+                }
+            }
+        }
 
-        // stage('Deploy to Staging Helm') {
-        //     steps {
-        //         sh 'pwd'
-        //         sh '''
-        //             helm upgrade --install vprofile ${CHART_PATH} \
-        //             --namespace staging \
-        //             --create-namespace \
-        //             -f ${CHART_PATH}/values-staging.yaml \
-        //             --set appimage=${ECR_REPO_URI_VPROFILE}/${ECR_REPO_NAME_VPROFILE} \
-        //             --set apptag=${BUILD_NUMBER} \
-        //             --kubeconfig ${KUBECONFIG} --debug
-        //            '''
-        //     }
-        // }
+        stage('Deploy to Staging Helm') {
+            steps {
+                sh 'pwd'
+                sh '''
+                    helm upgrade --install vprofile ${CHART_PATH} \
+                    --namespace staging \
+                    --create-namespace \
+                    -f ${CHART_PATH}/values-staging.yaml \
+                    --set appimage=${ECR_REPO_URI_VPROFILE}/${ECR_REPO_NAME_VPROFILE} \
+                    --set apptag=${BUILD_NUMBER} \
+                    --kubeconfig ${KUBECONFIG} --debug
+                   '''
+            }
+        }
 
         stage('Upload - AWS S3') {
             steps {
@@ -157,6 +157,19 @@ pipeline {
                             bucket:'staging-test-reports-chatapp', 
                             path:"jenkins-$BUILD_ID/"
                         )
+                }
+            }
+        }
+
+        stage('verify deployment') {
+            steps {
+                script {
+                    withCredentials([aws(accessKeyVariable: 'AWS_ACCESS_KEY_ID', credentialsId: 'aws_creds', secretKeyVariable: 'AWS_SECRET_ACCESS_KEY')]) {
+                        sh 'aws eks update-kubeconfig --region ${AWS_REGION} --name ${CLUSTER_NAME}'
+                        sh 'kubectl get pods -n staging'
+                        sh 'kubectl get svc -n staging'
+                        sh 'kubectl get deployment -n staging'
+                    }
                 }
             }
         }
