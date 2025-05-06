@@ -19,6 +19,7 @@ spec:
       containers:
       - name: vproapp
         image: {{ .Values.appimage }}:{{ .Values.apptag }}
+        imagePullPolicy: always
         ports:
         - name: vproapp-port
           containerPort: 8080

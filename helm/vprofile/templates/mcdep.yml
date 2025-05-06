@@ -9,8 +9,6 @@ spec:
     matchLabels:
       app: vpromc
   replicas: 1
-  strategy:
-    type: RollingUpdate
   template:
     metadata:
       labels:
