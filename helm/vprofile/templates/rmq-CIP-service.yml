@@ -3,10 +3,13 @@ kind: Service
 metadata:
   name: vpromq01
 spec:
-  ports:
-  - port: 5672
-    targetPort: vpromq01-port
-    protocol: TCP
   selector:
     app: vpromq01
   type: ClusterIP
+  ports:
+  - name: amqp
+    port: 5672
+    targetPort: 5672
+  - name: management
+    port: 15672
+    targetPort: 15672   # Optional, only needed for UI access

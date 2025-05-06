@@ -5,10 +5,10 @@ metadata:
   labels:
     app: vpromq01
 spec:
+  replicas: 1
   selector:
     matchLabels:
       app: vpromq01
-  replicas: 1
   template:
     metadata:
       labels:
@@ -18,14 +18,15 @@ spec:
       - name: vpromq01
         image: rabbitmq
         ports:
-        - name: vpromq01-port
-          containerPort: 15672
+        - name: amqp
+          containerPort: 5672   # <--- AMQP port for apps to connect
+        - name: management
+          containerPort: 15672  # Optional: for management UI
         env: 
-         - name: RABBITMQ_DEFAULT_PASS
-           valueFrom:
-             secretKeyRef:
-               name: app-secret
-               key: rmq-pass
-         - name: RABBITMQ_DEFAULT_USER
-           value: "guest"
-
+        - name: RABBITMQ_DEFAULT_PASS
+          valueFrom:
+            secretKeyRef:
+              name: app-secret
+              key: rmq-pass
+        - name: RABBITMQ_DEFAULT_USER
+          value: "guest"
