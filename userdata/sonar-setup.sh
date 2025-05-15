@@ -13,7 +13,7 @@ sonarqube   -   nproc    409
 EOT
 
 sudo apt-get update -y
-sudo apt-get install openjdk-11-jdk -y
+sudo apt-get install openjdk-21-jdk -y
 sudo update-alternatives --config java
 
 java -version
